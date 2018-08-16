@@ -7,14 +7,17 @@ class DB //1.Создаём класс DB
     //$path = __DIR__ . '/../config.php'
     public function __construct($path) //1.1 Создаём конструктор. В нём устанавливаем соединение с БД.
     {
-        require $path; //Параметры берём из файла config.php
-        $dsn = BD_DSN;
-        $this->dbh = new PDO($dsn, BD_USERNAME, BD_PASS);
+        $conf = require $path; //Параметры берём из файла config.php
+        if ( is_array($conf) ) {
+            if ( isset( $conf['dsn'], $conf['username'], $conf['password'] ) ) {
+                $this->dbh = new \PDO( $conf['dsn'], $conf['username'], $conf['password'] );
+            }
+        }
     }
 
     public function execute(string $sql) //1.2 Метод execute(string $sql) выполняет запрос и возвращает либо true, либо false
     {
-        $sth = $this->dbh->preвpare($sql); //подготовка запроса
+        $sth = $this->dbh->prepare($sql); //подготовка запроса
 
         if (false === $sth) { //если ошибка при подготовке запроса
             return false;
